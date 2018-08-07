@@ -2,6 +2,7 @@
 
 #folders
 node_modules/
+/data/db/
 
 #files
 .env
