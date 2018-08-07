@@ -8,11 +8,12 @@ const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(helmet());
+app.set('port', config.port);
 
 app.use((err, req, res, next) => next(err));
 
 app.use((req, res, next) => next({}));
 
-app.listen(config.port, () => {
-  console.info(`I am alive at ${config.port} on ${config.env} environment!`);
+app.listen(app.get('port'), () => {
+  console.info(`I am alive at ${app.get('port')} on ${config.env} environment!`);
 });
