@@ -14,5 +14,5 @@ app.use((err, req, res, next) => next(err));
 app.use((req, res, next) => next({}));
 
 app.listen(config.port, () => {
-  console.info(`I am alive at ${config.port} (${config.env})`);
+  console.info(`I am alive at ${config.port} on ${config.env} environment!`);
 });
