@@ -3,6 +3,8 @@ import bodyParser from 'body-parser';
 import helmet from 'helmet';
 import config from './config/config';
 
+require('./config/mongoose');
+
 const app = express();
 
 app.use(bodyParser.json());
