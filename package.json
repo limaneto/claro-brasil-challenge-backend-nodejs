@@ -16,6 +16,14 @@
     "url": "https://github.com/limaneto/claro-brasil-challenge-backend-nodejs/issues"
   },
   "homepage": "https://github.com/limaneto/claro-brasil-challenge-backend-nodejs#readme",
+  "devDependencies": {
+    "babel": "6.23.0",
+    "babel-cli": "6.26.0",
+    "babel-core": "6.26.0",
+    "babel-loader": "7.1.4",
+    "babel-preset-env": "1.6.1",
+    "babel-preset-es2015": "6.24.1"
+  },
   "dependencies": {
     "express": "4.16.3"
   }
