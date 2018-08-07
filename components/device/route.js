@@ -1,12 +1,13 @@
 import express from 'express';
+import { add, deleteDevice, edit } from './controller';
 
 const router = express.Router();
 
 router.route('/')
-  .post((req, res) => res.json({ message: 'It hit post!' }));
+  .post(add);
 
 router.route('/:id')
-  .put((req, res) => res.json({ message: 'It hit put!', id: req.params.id }))
-  .delete((req, res) => res.json({ message: 'It hit delete!', id: req.params.id }));
+  .delete(deleteDevice)
+  .put(edit);
 
 export default router;
