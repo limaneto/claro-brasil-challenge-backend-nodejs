@@ -1,4 +1,4 @@
-const add = ((req, res) => res.json({ message: 'It hit post!' }));
+const add = ((req, res) => res.json({ message: req.validator.message }));
 
 const deleteDevice = ((req, res) => res.json({ message: 'It hit put!', id: req.params.id }));
 
