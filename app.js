@@ -3,6 +3,7 @@ import bodyParser from 'body-parser';
 import helmet from 'helmet';
 import config from './config/config';
 import bindRoutes from './config/routes';
+import ApiError from './utils/erroConstructor';
 
 require('./config/mongoose');
 
@@ -21,10 +22,21 @@ app.listen(app.get('port'), () => {
 bindRoutes(app);
 
 app.use((req, res, next) => {
-  res.status(404).json({ erro: { message: 'Not found' } });
+  const err = new ApiError('Not found', '404');
+  return next(err);
 });
 
 app.use((err, req, res, next) => {
-  res.status(500).json({ erro: { message: 'Something went wrong.' } });
+  if (!(err instanceof ApiError)) {
+    const apiError = new ApiError(err.message, err.status);
+    return next(apiError);
+  }
+  return next(err);
 });
 
+app.use((err, req, res, next) => {
+  res.status(err.status).json({
+    message: err.message,
+    stack: config.env === 'development' ? err.stack : {},
+  });
+});
