@@ -8,6 +8,8 @@ const add = ((req, res) => {
       .then(() => {
         res.status(201).json({ message: 'Device registered with success!', device });
       });
+  } else {
+    res.status(200).json({ message: req.validation.message });
   }
 });
 
