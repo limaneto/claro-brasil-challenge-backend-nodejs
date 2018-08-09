@@ -19,15 +19,16 @@ const wasRegisteredWithinThirtyDays = (devices) => {
 const activeDevices = devices => devices.filter(device => device.active);
 
 const postValidation = async (req, res, next) => {
-  const num = Math.floor(Math.random() * 4);
-  const device = new Device();
-  device.user = config.USERS_ID[num];
-  const user = await User.findById(device.user);
-  config.USER_ID = user.id;
+  const user = await User.findById(req.body.userId);
+  if (!user) {
+    req.validation = { success: false, message: 'User not found' };
+    return next();
+  }
 
-  await Device.find({ user: config.USER_ID }).exec((err, devices) => {
+  req.body.device.user = user.id;
+  await Device.find({ user: user.id }).exec((err, devices) => {
     if (devices.length < 3) {
-      req.validation = { success: true, device: { user: user.id, name: 'iphone 4', os: 'ios' } };
+      req.validation = { success: true, device: req.body.device };
       return next();
     }
 
@@ -35,30 +36,30 @@ const postValidation = async (req, res, next) => {
 
     if (devices.length === 3) {
       if (numberOfActiveDevices === 3) {
-        req.validation = { success: false, devices, message: 'You\'ve reached the limit of registered devices but you can delete one and add another.' };
+        req.validation = { success: false, message: 'You\'ve reached the limit of registered devices but you can delete one and add another.' };
       } else {
-        req.validation = { success: true, device: { user: user.id, name: 'iphone 4', os: 'ios' } };
+        req.validation = { success: true, device: req.body.device };
       }
       return next();
     }
 
     if (devices.length > 3) {
       if (numberOfActiveDevices === 3 && wasRegisteredWithinThirtyDays(devices)) {
-        req.validation = { success: false, devices, message: 'You\'ve reached the limit of registered devices. You already registered a device within 30 last days.' };
+        req.validation = { success: false, message: 'You\'ve reached the limit of registered devices. You already registered a device within 30 last days.' };
         return next();
       }
 
       if (wasRegisteredWithinThirtyDays(devices)) {
-        req.validation = { success: false, devices, message: 'You already registered a device within 30 last days.' };
+        req.validation = { success: false, message: 'You already registered a device within 30 last days.' };
         return next();
       }
 
       if (numberOfActiveDevices === 3) {
-        req.validation = { success: false, devices, message: 'You\'ve reached the limit of registered devices but you can delete one and add another.' };
+        req.validation = { success: false, message: 'You\'ve reached the limit of registered devices but you can delete one and add another.' };
       }
     }
 
-    req.validation = { success: true, device: { user: user.id, name: 'samsung 8', os: 'android' } };
+    req.validation = { success: true, device: req.body.device };
     return next();
   });
 };
