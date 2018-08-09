@@ -16,7 +16,7 @@ const wasRegisteredWithinThirtyDays = (devices) => {
   return differenceInDays(new Date(), new Date(mostRecentRegister)) < 30;
 };
 
-const activeDevicesAmount = devices => devices.filter(device => device.active).length;
+const activeDevices = devices => devices.filter(device => device.active);
 
 const postValidation = async (req, res, next) => {
   const num = Math.floor(Math.random() * 4);
@@ -31,7 +31,7 @@ const postValidation = async (req, res, next) => {
       return next();
     }
 
-    const numberOfActiveDevices = activeDevicesAmount(devices);
+    const numberOfActiveDevices = activeDevices(devices).length;
 
     if (devices.length === 3) {
       if (numberOfActiveDevices === 3) {
