@@ -4,7 +4,9 @@ module.exports = {
     "no-console": 0,
     "no-underscore-dangle": 0,
     "consistent-return": 0,
-    "object-curly-newline": 0
+    "object-curly-newline": 0,
+    "no-param-reassign": 0,
+    "padded-blocks": 0
   },
   "env": {
     "node": true
