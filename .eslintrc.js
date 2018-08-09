@@ -6,7 +6,8 @@ module.exports = {
     "consistent-return": 0,
     "object-curly-newline": 0,
     "no-param-reassign": 0,
-    "padded-blocks": 0
+    "padded-blocks": 0,
+    "import/prefer-default-export": 0
   },
   "env": {
     "node": true
