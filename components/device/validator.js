@@ -18,6 +18,7 @@ const wasRegisteredWithinThirtyDays = (devices) => {
 
 const activeDevices = devices => devices.filter(device => device.active);
 
+// TODO dizer a data que o usuário vai poder registar outro device
 const postValidation = async (req, res, next) => {
   const user = await User.findById(req.body.userId);
   if (!user) {
@@ -67,4 +68,20 @@ const postValidation = async (req, res, next) => {
 /** END OF ADD A DEVICE VALIDATIONS * */
 
 
-export default postValidation;
+/** DELETE A DEVICE VALIDATIONS * */
+
+// TODO dizer a data que o usuário vai poder registar outro device
+const deleteValidation = async (req, res, next) => {
+  const device = await Device.findById(req.params.id);
+  const devices = await Device.find({ user: device.user });
+  const devicesActive = activeDevices(devices);
+  if (devices.length > 3 && devicesActive.length === 1 && wasRegisteredWithinThirtyDays(devicesActive)) {
+    req.validation = { success: false, message: 'Device cannot be remove since you would not be able to register another.' };
+  } else req.validation = { success: true, message: 'Device deleted successfully.', device };
+  return next();
+};
+
+/** END OF DELETE A DEVICE VALIDATIONS * */
+
+
+export { postValidation, deleteValidation };
