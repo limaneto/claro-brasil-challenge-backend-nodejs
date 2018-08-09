@@ -1,7 +1,7 @@
 import differenceInDays from 'date-fns/difference_in_days';
 import Device from './model';
 import User from '../user/model';
-import config from '../../config/config';
+import { get } from '../../utils/utility';
 
 /** ADD A DEVICE VALIDATIONS * */
 
@@ -84,4 +84,13 @@ const deleteValidation = async (req, res, next) => {
 /** END OF DELETE A DEVICE VALIDATIONS * */
 
 
-export { postValidation, deleteValidation };
+const updateValidation = (req, res, next) => {
+  if (get('device.name', req.body)) {
+    req.validation = { success: true };
+  } else {
+    req.validation = { success: false, message: 'You have to send the name of the device.' };
+  }
+  return next();
+};
+
+export { postValidation, deleteValidation, updateValidation };
