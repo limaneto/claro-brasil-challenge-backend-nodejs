@@ -7,14 +7,19 @@ const add = ((req, res) => {
       .save()
       .then(() => {
         res.status(201).json({ message: 'Device registered with success!', device });
-      });
-  } else {
-    res.status(200).json({ message: req.validation.message });
-  }
+      })
+      .catch((err) => { res.status(400).json(err); });
+  } else res.status(200).json({ message: req.validation.message });
 });
 
-const deleteDevice = ((req, res) => {
-  res.json({ message: 'It hit put!', id: req.params.id });
+const deleteDevice = (async (req, res) => {
+  if (req.validation.success) {
+    const { device } = req.validation;
+    device.active = false;
+    device.save(() => {
+      res.status(200).json({ message: `Your ${device.name} was deleted.` });
+    });
+  } else res.status(200).json({ message: req.validation.message });
 });
 
 const edit = ((req, res) => {
