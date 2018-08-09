@@ -1,6 +1,6 @@
 import express from 'express';
 import { add, deleteDevice, edit } from './controller';
-import { postValidation, deleteValidation } from './validator';
+import { postValidation, deleteValidation, updateValidation } from './validator';
 
 const router = express.Router();
 
@@ -9,6 +9,6 @@ router.route('/')
 
 router.route('/:id')
   .delete(deleteValidation, deleteDevice)
-  .put(edit);
+  .put(updateValidation, edit);
 
 export default router;
