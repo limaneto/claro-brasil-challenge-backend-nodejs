@@ -16,6 +16,8 @@ const wasRegisteredWithinThirtyDays = (devices) => {
   return differenceInDays(new Date(), new Date(mostRecentRegister)) < 30;
 };
 
+const activeDevicesAmount = devices => devices.filter(device => device.active).length;
+
 const postValidation = async (req, res, next) => {
   const num = Math.floor(Math.random() * 4);
   const device = new Device();
@@ -23,14 +25,16 @@ const postValidation = async (req, res, next) => {
   const user = await User.findById(device.user);
   config.USER_ID = user.id;
 
-  await Device.find({ user: config.USER_ID }).populate('user').exec((err, devices) => {
-    if (user.devicesAmount < 3) {
+  await Device.find({ user: config.USER_ID }).exec((err, devices) => {
+    if (devices.length < 3) {
       req.validation = { success: true, device: { user: user.id, name: 'iphone 4', os: 'ios' } };
       return next();
     }
 
-    if (user.devicesAmount === 3) {
-      if (devices.length === 3) {
+    const numberOfActiveDevices = activeDevicesAmount(devices);
+
+    if (devices.length === 3) {
+      if (numberOfActiveDevices === 3) {
         req.validation = { success: false, devices, message: 'You\'ve reached the limit of registered devices but you can delete one and add another.' };
       } else {
         req.validation = { success: true, device: { user: user.id, name: 'iphone 4', os: 'ios' } };
@@ -38,8 +42,8 @@ const postValidation = async (req, res, next) => {
       return next();
     }
 
-    if (user.devicesAmount > 3) {
-      if (devices.length === 3 && wasRegisteredWithinThirtyDays(devices)) {
+    if (devices.length > 3) {
+      if (numberOfActiveDevices === 3 && wasRegisteredWithinThirtyDays(devices)) {
         req.validation = { success: false, devices, message: 'You\'ve reached the limit of registered devices. You already registered a device within 30 last days.' };
         return next();
       }
@@ -49,7 +53,7 @@ const postValidation = async (req, res, next) => {
         return next();
       }
 
-      if (devices.length === 3) {
+      if (numberOfActiveDevices === 3) {
         req.validation = { success: false, devices, message: 'You\'ve reached the limit of registered devices but you can delete one and add another.' };
       }
     }
