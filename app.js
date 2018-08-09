@@ -4,6 +4,7 @@ import helmet from 'helmet';
 import config from './config/config';
 import bindRoutes from './config/routes';
 import ApiError from './utils/erroConstructor';
+import createUsers from './utils/createDefaultUser';
 
 require('./config/mongoose');
 
@@ -20,6 +21,7 @@ app.listen(app.get('port'), () => {
 });
 
 bindRoutes(app);
+createUsers();
 
 app.use((req, res, next) => {
   const err = new ApiError('Not found', '404');
