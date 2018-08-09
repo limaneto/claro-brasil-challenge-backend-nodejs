@@ -1,14 +1,14 @@
 import express from 'express';
 import { add, deleteDevice, edit } from './controller';
-import validator from './validator';
+import postValidation from './validator';
 
 const router = express.Router();
 
 router.route('/')
-  .post(validator, add);
+  .post(postValidation, add);
 
 router.route('/:id')
-  .delete(validator, deleteDevice)
-  .put(validator, edit);
+  .delete(deleteDevice)
+  .put(edit);
 
 export default router;
