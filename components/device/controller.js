@@ -1,7 +1,7 @@
 import Device from './model';
 import phrases from '../../utils/phrases';
 
-const add = ((req, res) => {
+const add = ((req, res, next) => {
   if (req.validation.success) {
     const device = new Device(req.validation.device);
     device
@@ -9,11 +9,11 @@ const add = ((req, res) => {
       .then(() => {
         res.status(201).json({ message: 'Device registered with success!', device });
       })
-      .catch((err) => { res.status(400).json(err); });
+      .catch(err => next(err));
   } else res.status(200).json({ message: req.validation.message });
 });
 
-const deleteDevice = (async (req, res) => {
+const deleteDevice = (async (req, res, next) => {
   if (req.validation.success) {
     const { device } = req.validation;
     device.active = false;
@@ -21,11 +21,12 @@ const deleteDevice = (async (req, res) => {
       .save()
       .then(() => {
         res.status(200).json({ message: `Your ${device.name} was deleted.` });
-      });
+      })
+      .catch(err => next(err));
   } else res.status(200).json({ message: req.validation.message });
 });
 
-const edit = ((req, res) => {
+const edit = ((req, res, next) => {
   if (req.validation.success) {
     Device
       .findById(req.params.id)
@@ -35,7 +36,8 @@ const edit = ((req, res) => {
           .save()
           .then(() => {
             res.json({ message: `${phrases.device.success}`, device });
-          });
+          })
+          .catch(err => next(err));
       });
   } else res.status(400).json({ message: req.validation.message });
 });
