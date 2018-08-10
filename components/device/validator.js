@@ -1,10 +1,18 @@
 import differenceInDays from 'date-fns/difference_in_days';
+import addDays from 'date-fns/add_days'
 import Device from './model';
 import User from '../user/model';
 import { get } from '../../utils/utility';
 import phrases from '../../utils/phrases';
 
+
 /** ADD A DEVICE VALIDATIONS * */
+
+const dateFromLastRegister = (devices) => {
+  const timeStamps = devices.map(device => (+new Date(device.createdAt).getTime()));
+  const mostRecentRegister = Math.max(...timeStamps);
+  return new Date(mostRecentRegister);
+};
 
 /**
  * Inform if the last device was registered within the last 30 days
@@ -12,9 +20,13 @@ import phrases from '../../utils/phrases';
  * @param devices
  */
 const wasRegisteredWithinThirtyDays = (devices) => {
-  const timeStamps = devices.map(device => (+new Date(device.createdAt).getTime()));
-  const mostRecentRegister = Math.max(...timeStamps);
-  return differenceInDays(new Date(), new Date(mostRecentRegister)) < 30;
+  const lastRegister = dateFromLastRegister(devices);
+  return differenceInDays(new Date(), lastRegister) < 30;
+};
+
+const nextAllowedDate = (devices) => {
+  const lastRegister = dateFromLastRegister(devices);
+  return addDays(lastRegister, 30);
 };
 
 const activeDevices = devices => devices.filter(device => device.active);
@@ -30,19 +42,20 @@ const postValidation = async (req, res, next) => {
   req.body.device.user = user.id;
 
   await Device.find({ user: user.id }).exec((err, allUserDevices) => {
-    const userActiveDevices = activeDevices(allUserDevices).length;
-    const withinLastThirtyDays = wasRegisteredWithinThirtyDays(allUserDevices);
+    const userActiveDevices = activeDevices(allUserDevices);
+    const withinLastThirtyDays = wasRegisteredWithinThirtyDays(userActiveDevices);
 
     if (allUserDevices.length > 3) {
       if (withinLastThirtyDays) {
-        if (userActiveDevices < 3) {
-          req.validation = { success: false, message: `${phrases.device.register.time}` };
-        } else req.validation = { success: false, message: `${phrases.device.register.limit} ${phrases.device.register.time} ${phrases.device.register.nallow}` };
+        const nextDate = nextAllowedDate(userActiveDevices);
+        if (userActiveDevices.length < 3) {
+          req.validation = { success: false, message: `${phrases.device.register.time} ${phrases.device.register.nextDate} ${nextDate}` };
+        } else req.validation = { success: false, message: `${phrases.device.register.limit} ${phrases.device.register.time} ${phrases.device.register.nallow} ${phrases.device.register.nextDate} ${nextDate}` };
         return next();
       }
     }
 
-    if (userActiveDevices === 3) {
+    if (userActiveDevices.length === 3) {
       req.validation = { success: false, message: `${phrases.device.register.limit} ${phrases.device.register.allow}` };
     } else {
       req.validation = { success: true, device: req.body.device };
