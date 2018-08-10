@@ -1,4 +1,5 @@
 import Device from './model';
+import phrases from '../../utils/phrases';
 
 const add = ((req, res) => {
   if (req.validation.success) {
@@ -33,7 +34,7 @@ const edit = ((req, res) => {
         device
           .save()
           .then(() => {
-            res.json({ message: req.validation.message, device });
+            res.json({ message: `${phrases.device.success}`, device });
           });
       });
   } else res.status(400).json({ message: req.validation.message });

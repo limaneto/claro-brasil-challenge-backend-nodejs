@@ -2,6 +2,7 @@ import differenceInDays from 'date-fns/difference_in_days';
 import Device from './model';
 import User from '../user/model';
 import { get } from '../../utils/utility';
+import phrases from '../../utils/phrases';
 
 /** ADD A DEVICE VALIDATIONS * */
 
@@ -27,40 +28,25 @@ const postValidation = async (req, res, next) => {
   }
 
   req.body.device.user = user.id;
-  await Device.find({ user: user.id }).exec((err, devices) => {
-    if (devices.length < 3) {
+
+  await Device.find({ user: user.id }).exec((err, allUserDevices) => {
+    const userActiveDevices = activeDevices(allUserDevices).length;
+    const withinLastThirtyDays = wasRegisteredWithinThirtyDays(allUserDevices);
+
+    if (allUserDevices.length > 3) {
+      if (withinLastThirtyDays) {
+        if (userActiveDevices < 3) {
+          req.validation = { success: false, message: `${phrases.device.register.time}` };
+        } else req.validation = { success: false, message: `${phrases.device.register.limit} ${phrases.device.register.time} ${phrases.device.register.nallow}` };
+        return next();
+      }
+    }
+
+    if (userActiveDevices === 3) {
+      req.validation = { success: false, message: `${phrases.device.register.limit} ${phrases.device.register.allow}` };
+    } else {
       req.validation = { success: true, device: req.body.device };
-      return next();
     }
-
-    const numberOfActiveDevices = activeDevices(devices).length;
-
-    if (devices.length === 3) {
-      if (numberOfActiveDevices === 3) {
-        req.validation = { success: false, message: 'You\'ve reached the limit of registered devices but you can delete one and add another.' };
-      } else {
-        req.validation = { success: true, device: req.body.device };
-      }
-      return next();
-    }
-
-    if (devices.length > 3) {
-      if (numberOfActiveDevices === 3 && wasRegisteredWithinThirtyDays(devices)) {
-        req.validation = { success: false, message: 'You\'ve reached the limit of registered devices. You already registered a device within 30 last days.' };
-        return next();
-      }
-
-      if (wasRegisteredWithinThirtyDays(devices)) {
-        req.validation = { success: false, message: 'You already registered a device within 30 last days.' };
-        return next();
-      }
-
-      if (numberOfActiveDevices === 3) {
-        req.validation = { success: false, message: 'You\'ve reached the limit of registered devices but you can delete one and add another.' };
-      }
-    }
-
-    req.validation = { success: true, device: req.body.device };
     return next();
   });
 };
@@ -76,8 +62,8 @@ const deleteValidation = async (req, res, next) => {
   const devices = await Device.find({ user: device.user });
   const devicesActive = activeDevices(devices);
   if (devices.length > 3 && devicesActive.length === 1 && wasRegisteredWithinThirtyDays(devicesActive)) {
-    req.validation = { success: false, message: 'Device cannot be remove since you would not be able to register another.' };
-  } else req.validation = { success: true, message: 'Device deleted successfully.', device };
+    req.validation = { success: false, message: `${phrases.device.delete.nallow}` };
+  } else req.validation = { success: true, device };
   return next();
 };
 
