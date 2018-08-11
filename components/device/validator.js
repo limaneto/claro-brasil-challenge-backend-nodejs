@@ -6,6 +6,8 @@ const utility = require('../../utils/utility');
 const phrases = require('../../utils/phrases');
 const ApiError = require('../../utils/erroConstructor');
 
+let erro;
+
 /** ADD A DEVICE VALIDATIONS * */
 
 const dateFromLastRegister = (devices) => {
@@ -39,7 +41,6 @@ const postValidation = async (req, res, next) => {
   }
 
   req.body.device.user = user.id;
-  let erro;
   await Device.find({ user: user.id }).exec((err, allUserDevices) => {
     const userActiveDevices = activeDevices(allUserDevices);
     const withinLastThirtyDays = wasRegisteredWithinThirtyDays(userActiveDevices);
@@ -73,8 +74,10 @@ const deleteValidation = async (req, res, next) => {
   const devices = await Device.find({ user: device.user });
   const devicesActive = activeDevices(devices);
   if (devices.length > 3 && devicesActive.length === 1 && wasRegisteredWithinThirtyDays(devicesActive)) {
-    req.validation = { success: false, message: `${phrases.device.delete.nallow}` };
-  } else req.validation = { success: true, device };
+    erro = new ApiError(`${phrases.device.delete.nallow}`, 400);
+    return next(erro);
+  }
+  req.body.device = device;
   return next();
 };
 
