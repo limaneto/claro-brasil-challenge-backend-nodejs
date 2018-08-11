@@ -18,6 +18,7 @@ module.exports = {
     "describe": true,
     "done": true,
     "beforeEach": true,
+    "before": true,
     "it": true
   }
 };
