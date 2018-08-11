@@ -5,6 +5,7 @@ module.exports = {
     "no-underscore-dangle": 0,
     "consistent-return": 0,
     "object-curly-newline": 0,
+    "no-loop-func": 0,
     "no-param-reassign": 0,
     "padded-blocks": 0,
     "import/prefer-default-export": 0
@@ -15,6 +16,8 @@ module.exports = {
   "globals": {
     "CONFIG": true,
     "describe": true,
+    "done": true,
+    "beforeEach": true,
     "it": true
   }
 };
