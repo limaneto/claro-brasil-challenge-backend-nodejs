@@ -4,9 +4,9 @@
   "description": "Claro Brasil Challenge - Node JS ===================",
   "main": "index.js",
   "scripts": {
-    "start": "babel-node app.js NODE_ENV=development",
-    "debug": "babel-node app.js --debug",
-    "test": "NODE_ENV=test mocha \"./components/**/test.js\" --bail --require babel-register"
+    "start": "node app.js NODE_ENV=development",
+    "debug": "node app.js --debug",
+    "test": "NODE_ENV=test mocha \"./components/**/test.js\" --bail"
   },
   "repository": {
     "type": "git",
