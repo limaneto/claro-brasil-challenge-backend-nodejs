@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "babel-node app.js",
-    "debug": "babel-node app.js --debug"
+    "debug": "babel-node app.js --debug",
+    "test": "mocha \"./components/**/test.js\" --require babel-register"
   },
   "repository": {
     "type": "git",
@@ -24,9 +25,13 @@
     "babel-loader": "7.1.4",
     "babel-preset-env": "1.6.1",
     "babel-preset-es2015": "6.24.1",
+    "babel-register": "6.26.0",
     "eslint": "4.19.1",
     "eslint-config-airbnb-base": "12.1.0",
-    "eslint-plugin-import": "2.11.0"
+    "eslint-plugin-import": "2.11.0",
+    "expect": "23.5.0",
+    "mocha": "5.2.0",
+    "request": "2.88.0"
   },
   "dependencies": {
     "body-parser": "1.18.3",
