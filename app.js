@@ -6,8 +6,9 @@ import bindRoutes from './config/routes';
 import ApiError from './utils/erroConstructor';
 import createUsers from './utils/createDefaultUser';
 
-require('./config/mongoose');
-
+if (config.env !== 'test') {
+  require('./config/mongoose');
+}
 
 const app = express();
 
@@ -21,7 +22,9 @@ app.listen(app.get('port'), () => {
 });
 
 bindRoutes(app);
-createUsers();
+if (config.env !== 'test') {
+  createUsers();
+}
 
 app.use((req, res, next) => {
   const err = new ApiError('Not found', '404');
@@ -29,6 +32,12 @@ app.use((req, res, next) => {
 });
 
 app.use((err, req, res, next) => {
+  if (err.name === 'ValidationError') {
+    const unifiedErrorMessage = err.errors[Object.keys(err.errors)[0]].message;
+    const error = new ApiError(unifiedErrorMessage, err.status);
+    return next(error);
+  }
+
   if (!(err instanceof ApiError)) {
     const apiError = new ApiError(err.message, err.status);
     return next(apiError);
@@ -39,6 +48,7 @@ app.use((err, req, res, next) => {
 app.use((err, req, res, next) => {
   res.status(err.status).json({
     message: err.message,
-    stack: config.env === 'development' ? err.stack : {},
   });
 });
+
+module.exports = app;

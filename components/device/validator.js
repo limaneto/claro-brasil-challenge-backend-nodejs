@@ -4,7 +4,7 @@ import Device from './model';
 import User from '../user/model';
 import { get } from '../../utils/utility';
 import phrases from '../../utils/phrases';
-
+import ApiError from '../../utils/erroConstructor';
 
 /** ADD A DEVICE VALIDATIONS * */
 
@@ -35,12 +35,11 @@ const activeDevices = devices => devices.filter(device => device.active);
 const postValidation = async (req, res, next) => {
   const user = await User.findById(req.body.userId);
   if (!user) {
-    req.validation = { success: false, message: 'User not found' };
     return next();
   }
 
   req.body.device.user = user.id;
-
+  let erro;
   await Device.find({ user: user.id }).exec((err, allUserDevices) => {
     const userActiveDevices = activeDevices(allUserDevices);
     const withinLastThirtyDays = wasRegisteredWithinThirtyDays(userActiveDevices);
@@ -49,16 +48,15 @@ const postValidation = async (req, res, next) => {
       if (withinLastThirtyDays) {
         const nextDate = nextAllowedDate(userActiveDevices);
         if (userActiveDevices.length < 3) {
-          req.validation = { success: false, message: `${phrases.device.register.time} ${phrases.device.register.nextDate} ${nextDate}` };
-        } else req.validation = { success: false, message: `${phrases.device.register.limit} ${phrases.device.register.time} ${phrases.device.register.nallow} ${phrases.device.register.nextDate} ${nextDate}` };
-        return next();
+          erro = new ApiError(`${phrases.device.register.time} ${phrases.device.register.nextDate} ${nextDate}`, 400);
+        } else erro = new ApiError(`${phrases.device.register.limit} ${phrases.device.register.time} ${phrases.device.register.nallow} ${phrases.device.register.nextDate} ${nextDate}`, 400);
+        return next(erro);
       }
     }
 
     if (userActiveDevices.length === 3) {
-      req.validation = { success: false, message: `${phrases.device.register.limit} ${phrases.device.register.allow}` };
-    } else {
-      req.validation = { success: true, device: req.body.device };
+      err = new ApiError(`${phrases.device.register.limit} ${phrases.device.register.allow}`, 400);
+      return next(err);
     }
     return next();
   });
