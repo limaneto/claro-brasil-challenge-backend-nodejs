@@ -1,10 +1,10 @@
-import differenceInDays from 'date-fns/difference_in_days';
-import addDays from 'date-fns/add_days'
-import Device from './model';
-import User from '../user/model';
-import { get } from '../../utils/utility';
-import phrases from '../../utils/phrases';
-import ApiError from '../../utils/erroConstructor';
+const differenceInDays = require('date-fns/difference_in_days');
+const addDays = require('date-fns/add_days');
+const Device = require('./model');
+const User = require('../user/model');
+const utility = require('../../utils/utility');
+const phrases = require('../../utils/phrases');
+const ApiError = require('../../utils/erroConstructor');
 
 /** ADD A DEVICE VALIDATIONS * */
 
@@ -82,7 +82,7 @@ const deleteValidation = async (req, res, next) => {
 
 
 const updateValidation = (req, res, next) => {
-  if (get('device.name', req.body)) {
+  if (utility.get('device.name', req.body)) {
     req.validation = { success: true };
   } else {
     req.validation = { success: false, message: 'You have to send the name of the device.' };
@@ -90,4 +90,4 @@ const updateValidation = (req, res, next) => {
   return next();
 };
 
-export { postValidation, deleteValidation, updateValidation };
+module.exports = { postValidation, deleteValidation, updateValidation };

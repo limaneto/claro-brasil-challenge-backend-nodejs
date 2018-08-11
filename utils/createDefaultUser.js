@@ -1,7 +1,6 @@
-import User from '../components/user/model';
-import config from '../config/config';
+const User = require('../components/user/model');
 
-export default () => {
+module.exports = () => {
   [1, 2, 3, 4, 5].forEach(() => {
     const user = new User();
     user.save(() => {});

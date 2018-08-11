@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   device: {
     register: {
       limit: "You've reached the limit of registered devices.",

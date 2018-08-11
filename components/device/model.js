@@ -1,5 +1,4 @@
-import mongoose from 'mongoose';
-import User from '../user/model';
+const mongoose = require('mongoose');
 
 const DeviceSchema = new mongoose.Schema({
   user: { type: mongoose.Schema.Types.ObjectId, ref: 'Users', required: true },
@@ -9,4 +8,4 @@ const DeviceSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
 });
 
-export default mongoose.model('Devices', DeviceSchema);
+module.exports = mongoose.model('Devices', DeviceSchema);

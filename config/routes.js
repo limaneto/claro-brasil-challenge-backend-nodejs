@@ -1,10 +1,10 @@
-import express from 'express';
-import deviceRoute from '../components/device/route';
+const express = require('express');
+const deviceRoute = require('../components/device/route');
 
 const router = express.Router();
 router.use('/devices', deviceRoute);
 
 
-export default (app) => {
+module.exports = (app) => {
   app.use('/api', router);
 };

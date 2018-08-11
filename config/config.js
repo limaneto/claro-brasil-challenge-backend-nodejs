@@ -1,6 +1,6 @@
 require('dotenv').config();
 
-export default {
+module.exports = {
   port: process.env.PORT || 5656,
   env: process.env.NODE_ENV || 'development',
   DB_HOST: process.env.DB_HOST,

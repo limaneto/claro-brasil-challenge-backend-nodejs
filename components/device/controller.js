@@ -1,5 +1,5 @@
-import Device from './model';
-import phrases from '../../utils/phrases';
+const Device = require('./model');
+const phrases = require('../../utils/phrases');
 
 const add = ((req, res, next) => {
   const device = new Device(req.body.device);
@@ -13,8 +13,8 @@ const add = ((req, res, next) => {
     });
 });
 
-const deleteDevice = (async (req, res, next) => {
-  const { device } = req.body.device;1
+const deleteDevice = ((req, res, next) => {
+  const { device } = req.body;
   device.active = false;
   device
     .save()
@@ -38,4 +38,4 @@ const edit = ((req, res, next) => {
     });
 });
 
-export { add, deleteDevice, edit };
+module.exports = { add, deleteDevice, edit };

@@ -1,14 +1,14 @@
-import express from 'express';
-import { add, deleteDevice, edit } from './controller';
-import { postValidation, deleteValidation, updateValidation } from './validator';
+const express = require('express');
+const controller = require('./controller');
+const validator = require('./validator');
 
 const router = express.Router();
 
 router.route('/')
-  .post(postValidation, add);
+  .post(validator.postValidation, controller.add);
 
 router.route('/:id')
-  .delete(deleteValidation, deleteDevice)
-  .put(updateValidation, edit);
+  .delete(validator.deleteValidation, controller.deleteDevice)
+  .put(validator.updateValidation, controller.edit);
 
-export default router;
+module.exports = router;

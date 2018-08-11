@@ -1,10 +1,11 @@
-import express from 'express';
-import bodyParser from 'body-parser';
-import helmet from 'helmet';
-import config from './config/config';
-import bindRoutes from './config/routes';
-import ApiError from './utils/erroConstructor';
-import createUsers from './utils/createDefaultUser';
+const express = require('express');
+const bodyParser = require('body-parser');
+const helmet = require('helmet');
+const config = require('./config/config');
+const bindRoutes = require('./config/routes');
+const ApiError = require('./utils/erroConstructor');
+const createUsers = require('./utils/createDefaultUser');
+
 
 if (config.env !== 'test') {
   require('./config/mongoose');
@@ -27,7 +28,7 @@ if (config.env !== 'test') {
 }
 
 app.use((req, res, next) => {
-  const err = new ApiError('Not found', '404');
+  const err = new ApiError('Not found', 404);
   return next(err);
 });
 
