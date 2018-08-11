@@ -70,7 +70,9 @@ const postValidation = async (req, res, next) => {
 
 // TODO dizer a data que o usuário vai poder registar outro device
 const deleteValidation = async (req, res, next) => {
-  const device = await Device.findById(req.params.id);
+  if (!req.params.id) return next(new ApiError('You have to inform the device id.', 400));
+  const device = await Device.findOne({ _id: req.params.id, active: true });
+  if (!device) return next(new ApiError('Could not find the device.', 404));
   const devices = await Device.find({ user: device.user });
   const devicesActive = activeDevices(devices);
   if (devices.length > 3 && devicesActive.length === 1 && wasRegisteredWithinThirtyDays(devicesActive)) {
