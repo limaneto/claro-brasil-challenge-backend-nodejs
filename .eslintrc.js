@@ -13,6 +13,8 @@ module.exports = {
     "node": true
   },
   "globals": {
-    "CONFIG": true
+    "CONFIG": true,
+    "describe": true,
+    "it": true
   }
 };
