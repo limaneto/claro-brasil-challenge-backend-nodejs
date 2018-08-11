@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/limaneto/claro-brasil-challenge-backend-nodejs.svg?branch=master)](https://travis-ci.com/limaneto/claro-brasil-challenge-backend-nodejs)
+
 Claro Brasil Challenge - Node JS
 ===================
 
