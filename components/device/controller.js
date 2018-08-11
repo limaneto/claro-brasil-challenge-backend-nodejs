@@ -14,7 +14,7 @@ const add = ((req, res, next) => {
 });
 
 const deleteDevice = (async (req, res, next) => {
-  const { device } = req.body.device;
+  const { device } = req.body.device;1
   device.active = false;
   device
     .save()

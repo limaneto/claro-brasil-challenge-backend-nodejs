@@ -34,7 +34,7 @@ app.use((req, res, next) => {
 app.use((err, req, res, next) => {
   if (err.name === 'ValidationError') {
     const unifiedErrorMessage = err.errors[Object.keys(err.errors)[0]].message;
-    const error = new ApiError(unifiedErrorMessage, err.status);
+    const error = new ApiError(unifiedErrorMessage, 400);
     return next(error);
   }
 
