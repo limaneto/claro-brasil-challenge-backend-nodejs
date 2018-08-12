@@ -4,13 +4,13 @@ files:
   - source: /
     destination: /home/ec2-user/claro-challenge
 hooks:
-  BeforInstall:
-
-  AfterInstall:
+  Install:
     - location: scripts/npm-install.sh
       runas: root
       timeout: 300
   ApplicationStart:
+    - location: scripts/mongod-start.sh
+    - location: scripts/mongo-start.sh
     - location: scripts/npm-start.sh
       runas: root
-      timeout: 60
+      timeout: 300
