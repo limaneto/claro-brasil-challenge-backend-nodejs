@@ -4,9 +4,20 @@ node_js:
   - "8.3.0"
 services:
   - mongodb
+cache:
+  directories:
+    - node_modules
 install:
   - npm install
 before_script:
   - sleep 15
 script:
   - npm test
+deploy:
+  - provider: codedeploy
+    revision_type: github
+    application: "ClaroChallenge"
+    deployment_group: "ClaroChallengeGroup"
+    secret_access_key: $AWS_SECRET_KEY
+    access_key_id: $AWS_ACCESS_KEY
+    region: "us-east-2"
