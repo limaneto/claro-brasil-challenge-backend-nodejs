@@ -36,6 +36,7 @@ O objetivo deste desafio é avaliar a competência técnica dos candidatos a des
 - [date-fns](https://date-fns.org/) - For date manipulation
 - [dotenv](https://github.com/motdotla/dotenv) - Loads env variables
 - [helmet](https://helmetjs.github.io/) - Handles HTTP headers for security purpose
+- [eslint](https://eslint.org/) -  Tool for identifying errors and patterns flaws in JavaScript
 
 #### Application Structure
 - `/components` - contains all the models related services, such as route, validators, controller, and the model itself.

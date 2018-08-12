@@ -34,7 +34,6 @@ const nextAllowedDate = (devices) => {
 
 const activeDevices = devices => devices.filter(device => device.active);
 
-// TODO dizer a data que o usuário vai poder registar outro device
 const postValidation = async (req, res, next) => {
   if (!req.body.userId) return next(new ApiError('Need a user id.', 400));
   const user = await User
@@ -77,7 +76,6 @@ const postValidation = async (req, res, next) => {
 
 /** DELETE A DEVICE VALIDATIONS * */
 
-// TODO dizer a data que o usuário vai poder registar outro device
 const deleteValidation = async (req, res, next) => {
   if (!req.params.id) return next(new ApiError('You have to inform the device id.', 400));
   const device = await Device.findOne({ _id: req.params.id, active: true })
