@@ -1,4 +1,5 @@
 const differenceInDays = require('date-fns/difference_in_days');
+const mongoose = require('mongoose');
 const addDays = require('date-fns/add_days');
 const Device = require('./model');
 const User = require('../user/model');
@@ -35,9 +36,17 @@ const activeDevices = devices => devices.filter(device => device.active);
 
 // TODO dizer a data que o usuário vai poder registar outro device
 const postValidation = async (req, res, next) => {
-  const user = await User.findById(req.body.userId);
+  if (!req.body.userId) return next(new ApiError('Need a user id.', 400));
+  const user = await User
+    .findById(req.body.userId)
+    .catch((err) => {
+      if (err instanceof mongoose.CastError) return next(new ApiError('Provided ID is not valid.', 400));
+      return next(new ApiError('Sevice is temporaily unavailable.', 500));
+    });
+
   if (!user) {
-    return next();
+    erro = new ApiError('No user found', 404);
+    return next(erro);
   }
 
   req.body.device.user = user.id;
@@ -71,7 +80,11 @@ const postValidation = async (req, res, next) => {
 // TODO dizer a data que o usuário vai poder registar outro device
 const deleteValidation = async (req, res, next) => {
   if (!req.params.id) return next(new ApiError('You have to inform the device id.', 400));
-  const device = await Device.findOne({ _id: req.params.id, active: true });
+  const device = await Device.findOne({ _id: req.params.id, active: true })
+    .catch((err) => {
+      if (err instanceof mongoose.CastError) return next(new ApiError('Provided ID is not valid.', 400));
+      return next(new ApiError('Sevice is temporaily unavailable.', 500));
+    });
   if (!device) return next(new ApiError('Could not find the device.', 404));
   const devices = await Device.find({ user: device.user });
   const devicesActive = activeDevices(devices);
@@ -87,10 +100,8 @@ const deleteValidation = async (req, res, next) => {
 
 
 const updateValidation = (req, res, next) => {
-  if (utility.get('device.name', req.body)) {
-    req.validation = { success: true };
-  } else {
-    req.validation = { success: false, message: 'You have to send the name of the device.' };
+  if (!utility.get('device.name', req.body)) {
+    erro = new ApiError('You have to send the name of the device.', 400);
   }
   return next();
 };
