@@ -25,6 +25,9 @@ O objetivo deste desafio é avaliar a competência técnica dos candidatos a des
   Bear in min this project is hooked with Travis CI and runs tests there in every commint pushed and shows a up to date badge of passing tests.
   <img src="https://docs.google.com/uc?export=download&id=1TsKiC2LvsMhZCVxfFo8t6Ez7590zYgR0" alt="Travis Build"/>
   
+##### For manual tests and documentation this project uses Swagger, when the project is running access it at:
+  ``localhost:5656/api-docs``
+  
 ## Code Overview ##
   
 #### Dependencies ####
