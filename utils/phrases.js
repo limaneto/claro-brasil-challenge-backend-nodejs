@@ -8,7 +8,7 @@ module.exports = {
       nextDate: 'But you can add another from: ',
     },
     delete: {
-      nallow: 'Device cannot be remove since you would not be able to register another.',
+      nallow: 'Device cannot be removed since you would not be able to register another.',
       success: 'Device deleted successfully.',
     },
   },
