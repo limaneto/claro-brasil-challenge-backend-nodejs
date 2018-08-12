@@ -17,7 +17,7 @@ describe('set config', function () {
     const db = mongoose.connection;
     mongoose.connect(`mongodb://${config.DB_HOST}:${config.DB_SERVER_PORT}/${config.DB_NAME}`, { connectTimeoutMS: 30000, keepAlive: 300000, promiseLibrary: global.Promise, useNewUrlParser: true });
     db.on('error', (err) => { console.log('Erro on MongoDB connection', err); });
-    db.once('open', function() {
+    db.once('open', function () {
       db.dropDatabase();
       done();
     });
