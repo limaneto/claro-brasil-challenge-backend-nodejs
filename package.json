@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node app.js NODE_ENV=development",
     "debug": "node app.js --debug",
-    "test": "NODE_ENV=test mocha \"./components/**/test.js\" --bail"
+    "test": "NODE_ENV=test mocha \"./components/**/test.js\" --bail --exit"
   },
   "repository": {
     "type": "git",
