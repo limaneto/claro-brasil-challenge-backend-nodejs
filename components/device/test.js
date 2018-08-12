@@ -1,6 +1,7 @@
 /* eslint-disable prefer-arrow-callback,func-names */
 const request = require('supertest');
 const mongoose = require('mongoose');
+const subMonths = require('date-fns/sub_months');
 const app = require('../../app');
 const assert = require('assert');
 const config = require('../../config/config');
@@ -118,7 +119,7 @@ describe('POST devices', function () {
       .catch((err) => { done(err); });
   });
 
-  it('should not be able to add a fourth', function (done) {
+  it('should not be able to add a fourth due to limit of devices', function (done) {
     const device = new Device({ name: 'xdfrthukgepjg357j', os: 'ios' });
     request(app)
       .post('/api/devices')
@@ -172,7 +173,7 @@ describe('POST devices', function () {
       .catch(err => done(err));
   });
 
-  it('should not be able to add a fifth', function (done) {
+  it('should not be able to add a fifth because of the 30 days thing', function (done) {
     const device = new Device({ name: 'xdfrthukgepjg357j', os: 'ios' });
     request(app)
       .post('/api/devices')
@@ -186,5 +187,99 @@ describe('POST devices', function () {
         assert.ok(limit && days && noChange);
         done();
       });
+  });
+
+  it('should delete a device', function (done) {
+    request(app)
+      .delete(`/api/devices/${testDevices[1]._id}`)
+      .set('Accept', 'application/json')
+      .expect('Content-Type', /json/)
+      .expect(200)
+      .then((response) => {
+        assert.ok(response.body.message.toLowerCase().indexOf('deleted') !== -1);
+        done();
+      });
+  });
+
+  it('should check if latter device was deleted', function (done) {
+    Device
+      .findById(testDevices[1]._id)
+      .then((device) => {
+        assert.ok(device.active === false);
+        done();
+      });
+  });
+
+  it('should delete a device', function (done) {
+    request(app)
+      .delete(`/api/devices/${testDevices[2]._id}`)
+      .set('Accept', 'application/json')
+      .expect('Content-Type', /json/)
+      .expect(200)
+      .then((response) => {
+        assert.ok(response.body.message.toLowerCase().indexOf('deleted') !== -1);
+        done();
+      });
+  });
+
+  it('should check if latter device was deleted', function (done) {
+    Device
+      .findById(testDevices[2]._id)
+      .then((device) => {
+        assert.ok(device.active === false);
+        done();
+      });
+  });
+
+  it('should not be able to delete the last device having made a device change within last 30 days and that being the last device', function (done) {
+    request(app)
+      .delete(`/api/devices/${testDevices[3]._id}`)
+      .set('Accept', 'application/json')
+      .expect('Content-Type', /json/)
+      .expect(400)
+      .then((response) => {
+        assert.ok(response.body.message.toLowerCase().indexOf('cannot be removed') !== -1);
+        done();
+      });
+  });
+
+  it('should check if last device was NOT deleted', function (done) {
+    Device
+      .findById(testDevices[3]._id)
+      .then((device) => {
+        assert.ok(device.active === true);
+        done();
+      });
+  });
+
+  it('should handle the 30 days limit', function (done) {
+    Device
+      .find({ user: testUser.id, active: true })
+      .then((devices) => {
+        for (let i = 0; i < devices.length; i += 1) {
+          devices[i].createdAt = subMonths(devices[i].createdAt, 2);
+          devices[i].save().then(function () { if (i + 1 === devices.length) done(); });
+        }
+      });
+  });
+
+  it('should add a device now that the 30 days thing is not a problem', function (done) {
+    const device = new Device({ name: 'etryutioyutyr', os: 'android' });
+    request(app)
+      .post('/api/devices')
+      .send({ userId: testUser.id, device })
+      .set('Accept', 'application/json')
+      .expect(201)
+      .then((response) => {
+        testDevices.push(response.body.device);
+        assert.equal(response.body.message, 'Device registered with success!');
+        assert.equal(typeof response.body.device, 'object');
+        assert.equal(response.body.device.user, testUser.id);
+        assert.equal(response.body.device.active, true);
+        assert.equal(response.body.device.name, 'etryutioyutyr');
+        assert.equal(response.body.device.os, 'android');
+        done();
+      })
+      .catch(err => done(err));
   });
 });
