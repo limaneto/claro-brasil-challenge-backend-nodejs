@@ -12,9 +12,11 @@ O objetivo deste desafio é avaliar a competência técnica dos candidatos a des
 ## Running ##
  To get the project up and running, having in mind that you need node and mongodb installed
  on your local machine follow the bellow steps:
-  - ``git clone https://github.com/limaneto/claro-brasil-challenge-backend-nodejs.git``
-  - ``run npm install`` to install the dependencies
-  - ``npm start``
+  - run ``git clone https://github.com/limaneto/claro-brasil-challenge-backend-nodejs.git``
+  - run ``run npm install`` to install the dependencies
+  - run ``mongod``
+  - run ``mongo``
+  - run ``npm start``
   
 ## Testing ##
   Assuming you already setup the project in the step before just run:
@@ -36,6 +38,14 @@ O objetivo deste desafio é avaliar a competência técnica dos candidatos a des
 - `/components` - contains all the models related services, such as route, validators, controller, and the model itself.
 - `/config` - load env variables, start the database, config the outer routes.
 - `/utils` - phrases, error constructor, initial users for make test easier since you cannot create users, and a utility file to mimic underscore and lodash.
- 
-  
+
+I decided to use the components architecture because I think improves the code organization, when you are developing new
+functionalities you know all the steps you have to take, it is easier to find all the files of the module,
+easier to understand the business logic, easier to understand what the project is about, etc.
+
+I decided to separate the validation of the business logic on its own files, that way the controller would not get so
+complex.
+
+All the validation errors are just passed to the ``next()`` middleware not passing through the controller,
+and to create a unified error message I use the error constructor ``ApiError``. 
   
