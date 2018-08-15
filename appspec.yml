@@ -9,8 +9,6 @@ hooks:
       runas: root
       timeout: 300
   ApplicationStart:
-    - location: scripts/mongod-start.sh
-    - location: scripts/mongo-start.sh
     - location: scripts/npm-start.sh
       runas: root
       timeout: 300

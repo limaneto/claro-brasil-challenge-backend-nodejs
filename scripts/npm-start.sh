@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-sudo npm start
+sudo pm2 start process.yml

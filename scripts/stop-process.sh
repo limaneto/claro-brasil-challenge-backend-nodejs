@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-sudo mongo
+sudo pm2 stop all
